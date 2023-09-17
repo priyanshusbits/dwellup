@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dwell-Up</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" href="images/Logo.png" type="image/x-icon" />
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow&family=Poppins&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+    <div class=" min-h-screen bg-grey-800 bg-[url(./images/bg-texture.png)]">
+        <header class="text-gray-600 body-font ml-5" ">
+            <div
+              class="container mx-auto flex flex-wrap flex-col md:flex-row items-center"
+            >
+              <style>
+                .title-font:hover {
+                  color: #000000;
+                  cursor: pointer;
+                  transform: scale(1.1);
+                  transition: transform 0.2s ease-in-out;
+                }
+              </style>
+    
+            
+    
+              <script>
+                function myfunction() {
+                  location.href = "index.html";
+                }
+              </script>
+    
+              <nav
+                class="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center"
+              >
+                <a class="mr-5 hover:text-gray-900"></a>
+                <a class="mr-5 hover:text-gray-900"></a>
+                <a class="mr-5 hover:text-gray-900"></a>
+                <a class="mr-5 hover:text-gray-900"></a>
+              </nav>
+    
+              <button style="margin-right: 29px; margin-top: 29px;"
+                class="bg-transparent border border-cyan-400 rounded-full text-cyan-200 font-semibold px-6 py-3 transition duration-300 ease-in-out transform hover:bg-cyan-800 hover:text-white active:shadow-none active:translate-y-0.5 disabled:pointer-events-none"
+                id="connect-button"
+              >
+                Connect Wallet
+              </button>
+            </div>
+          </header>
+        <header class="text-gray-600 body-font ml-5">
+            <div class="container mx-auto flex flex-wrap  flex-col md:flex-row items-center">
+                <style>
+                    .title-font:hover {
+                        color: #000000;
+                        cursor: pointer;
+                        transform: scale(1.1);
+                        transition: transform 0.2s ease-in-out;
+                    }
+                </style>
+
+              
+
+
+                <script>
+                    function myfunction() {
+                        location.href = "index.html";
+                    }
+                </script>
+
+               
+                <section class="text-gray-600 body-font">
+                    <div class="container px-5 py-24 mx-auto">
+                        <div class="flex flex-wrap -m-4" id="mainContainer">
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </header>
+        <script>
+            document.getElementById("mainContainer");
+            var img = new Image();
+            img.src = "images/avatar.png";
+
+            fetch('freeLancer2.json')
+                .then(response => response.json())
+                .then(ABI => {
+                    var web3 = new Web3("https://endpoints.omniatech.io/v1/matic/mumbai/public");
+                    var contract = new web3.eth.Contract(ABI, "0xc9CDb3B48A95e8B478D7e2eAFd593C8c443693BD");
+
+                    contract.methods.totalUsers().call((err, totalUsers) => {
+                        if (err) console.error(err);
+                        var j=0;
+                        var k=0;
+                        for (let i = 0; i < totalUsers; i++) {
+                            contract.methods.getAllUsers(i).call((error, listUser) => {
+                                if (error) {
+                                    console.error(error);
+                                    return;
+                                }
+                                console.log(listUser);
+
+                                const productDiv = document.createElement("div");
+                                productDiv.setAttribute("class", "xl:w-1/4 md:w-1/2 p-4");
+                                productDiv.setAttribute("id", "productContainer");
+
+                                const InnerContainer = document.createElement("div");
+                                InnerContainer.setAttribute("class", "bg-gray-100 p-7 rounded-lg");
+                                InnerContainer.setAttribute("style", "background-color: #ffffff;");
+                                InnerContainer.setAttribute("id", "InnerContainer");
+                                productDiv.appendChild(InnerContainer);
+                                if(j===4){
+                                    j=0;
+                                    k++;
+                                }
+                                if(k===3){
+                                    k=0;
+                                }
+                                
+                                var image = document.createElement("canvas");
+                                image.setAttribute("class", "h-auto transition-all duration-300 rounded-lg ");
+                                image.height = 319;
+                                image.width = 291;
+                                var ctx = image.getContext("2d");
+                                ctx.drawImage(img, j*319, k*291, 319, 291, 0, 0, 319, 291);
+                                var newImg = new Image();
+                                newImg.src = image.toDataURL();
+                                image.alt = "image description";
+                                image.setAttribute("id", "displayImag");
+                                InnerContainer.appendChild(image);
+                                j++;
+
+                                const name = document.createElement("h2");
+                                name.setAttribute("class", "text-lg text-gray-900 font-medium title-font mb-4");
+                                name.textContent = listUser[1];
+                                name.setAttribute("id", "title");
+                                InnerContainer.appendChild(name);
+
+                                const age = document.createElement("p");
+                                age.setAttribute("class", "leading-relaxed text-base");
+                                age.textContent = "AGE: " + listUser[2];
+                                age.setAttribute("id", "description");
+                                InnerContainer.appendChild(age);
+
+                                const currentPosition = document.createElement("p");
+                                currentPosition.setAttribute("class", "leading-relaxed text-base");
+                                currentPosition.textContent = "CURRENT WORKING: " + listUser[3];
+                                currentPosition.setAttribute("id", "textContent");
+                                InnerContainer.appendChild(currentPosition);
+
+                                const experience = document.createElement("p");
+                                experience.setAttribute("class", "leading-relaxed text-base");
+                                experience.textContent = "EXPERIENCE: " + listUser[4] + " Years";
+                                experience.setAttribute("id", "textContent");
+                                InnerContainer.appendChild(experience);
+                                const meetAnchor = document.createElement("a");
+meetAnchor.setAttribute("href", "https://app.huddle01.com/lgz-vtap-yfj/lobby");
+InnerContainer.appendChild(meetAnchor);
+
+const meetBtn = document.createElement("button");
+meetBtn.setAttribute("class", "float-right bg-transparent border border-cyan-400 rounded-full text-cyan-200 font-semibold px-2 py-1 transition duration-300 ease-in-out transform hover:bg-cyan-800 hover:text-white active:shadow-none active:translate-y-0.5 disabled:pointer-events-none");
+meetBtn.textContent = "Meet";
+meetAnchor.appendChild(meetBtn);
+
+
+                                const skills = document.createElement("p");
+                                skills.setAttribute("class", "leading-relaxed text-base");
+                                skills.textContent = listUser[5].join(", ");
+                                skills.setAttribute("id", "textContent");
+                                InnerContainer.appendChild(skills);
+
+                                mainContainer.append(productDiv);
+                            });
+                        }
+                    });
+                })
+                .catch(error => console.error('Error retrieving ABI:', error));
+        </script>
+
+<script>
+    const button = document.getElementById("connect-button");
+    const moreBtn = document.getElementById("moreBtn");
+    const getStartedButton = document.getElementById("get-started-button");
+  
+    const updateButton = () => {
+const account = localStorage.getItem("walletAddress");
+
+if (!account) {
+  button.textContent = "Connect wallet";
+  moreBtn.style.display = "none";
+  getStartedButton.style.display = "none";
+  return;
+}
+
+ethereum
+  .request({ method: "eth_accounts" })
+  .then((accounts) => {
+    if (accounts.length === 0) {
+      button.textContent = "Connect wallet";
+      localStorage.removeItem("walletAddress");
+      moreBtn.style.display = "none";
+      getStartedButton.style.display = "none";
+    } else {
+      const shortenedAccount = `${accounts[0].slice(
+        0,
+        4
+      )}...${accounts[0].slice(-4)}`;
+      button.textContent = shortenedAccount;
+      localStorage.setItem("walletAddress", accounts[0]);
+      moreBtn.style.display = "flex";
+      getStartedButton.style.display = "block"; // This line is added to show the "Get started" button
+    }
+  });
+};
+
+  
+    button.addEventListener("click", () => {
+      const account = localStorage.getItem("walletAddress");
+  
+      if (!account) {
+        ethereum
+          .request({ method: "eth_requestAccounts" })
+          .then((accounts) => {
+            const shortenedAccount = `${accounts[0].slice(
+              0,
+              4
+            )}...${accounts[0].slice(-4)}`;
+            button.textContent = shortenedAccount;
+            localStorage.setItem("walletAddress", accounts[0]);
+            moreBtn.style.display = "flex";
+            getStartedButton.style.display = "inline-block";
+          });
+      } else {
+        ethereum
+          .request({ method: "eth_accounts" })
+          .then((accounts) => {
+            if (accounts.length === 0) {
+              button.textContent = "Connect wallet";
+              localStorage.removeItem("walletAddress");
+              moreBtn.style.display = "none";
+              getStartedButton.style.display = "none";
+            } else {
+              const shortenedAccount = `${accounts[0].slice(
+                0,
+                4
+              )}...${accounts[0].slice(-4)}`;
+              button.textContent = shortenedAccount;
+              moreBtn.style.display = "flex";
+              getStartedButton.style.display = "inline-block";
+            }
+          });
+      }
+    });
+  
+    updateButton();
+    ethereum.on("accountsChanged", updateButton);
+    getStartedButton.style.display = "none";
+  </script>
+</body>
+
+</html>

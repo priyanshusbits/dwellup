@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dwell-Up</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link rel="shortcut icon" href="images/Logo.png" type="image/x-icon" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+
+    <style>
+      #moreBtn {
+        color: aliceblue;
+        display: none;
+      }
+      #moreBtn:hover {
+        color: rgb(61, 112, 201) !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="min-h-screen">
+      <header class="text-gray-600 body-font ml-5">
+        <div
+          class="container mx-auto flex flex-wrap flex-col md:flex-row items-center"
+        >
+          <style>
+            body{
+              background-color: #395b64;
+              background-image: url(./images/bg-texture.png);
+            }
+            .title-font:hover {
+              color: #000000;
+              cursor: pointer;
+              transform: scale(1.1);
+              transition: transform 0.2s ease-in-out;
+            }
+          </style>
+
+          <img src="images/lgo.png" height="96px" width="96px" style="margin-top: 1rem;" />
+
+          <script>
+            function myfunction() {
+              location.href = "index.html";
+            }
+          </script>
+
+          <nav
+            class="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center"
+          >
+            <a class="mr-5 hover:text-gray-900"></a>
+            <a class="mr-5 hover:text-gray-900"></a>
+            <a class="mr-5 hover:text-gray-900"></a>
+            <a class="mr-5 hover:text-gray-900"></a>
+          </nav>
+
+          <button style="margin-right: 29px;"
+            class="bg-transparent border border-cyan-400 rounded-full text-cyan-200 font-semibold px-6 py-3 transition duration-300 ease-in-out transform hover:bg-cyan-800 hover:text-white active:shadow-none active:translate-y-0.5 disabled:pointer-events-none"
+            id="connect-button"
+          >
+            Connect Wallet
+          </button>
+        </div>
+      </header>
+      <section class="pt-10 sm:pt-16 lg:pt-24">
+        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div class="grid items-center grid-cols-1 gap-12 lg:grid-cols-2">
+            <div>
+              <h1 class="text-4xl font-bold text-black sm:text-6xl lg:text-7xl">
+                Revolutionize your freelancing game with<br />
+                <div class="relative inline-flex">
+                  <span
+                    class="absolute inset-x-0 bottom-0 border-b-[30px] border-[#395B64]"
+                  ></span>
+                  <h1
+                    class="relative text-4xl font-bold text-black sm:text-6xl lg:text-7xl"
+                  >
+                    WEB3
+                  </h1>
+                </div>
+              </h1>
+              <a href="dashboard.html">
+                <button class="cssbuttons-io-button" id="get-started-butto0n">
+                  Get started
+                  <div class="icon">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      height="24"
+                    >
+                      <path fill="none" d="M0 0h24v24H0z"></path>
+                      <path
+                        fill="currentColor"
+                        d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"
+                      ></path>
+                    </svg>
+                  </div></button
+              ></a>
+              <style>
+                .cssbuttons-io-button {
+                  background: #395b64;
+                  color: white;
+                  font-family: inherit;
+                  padding: 0.35em;
+                  padding-left: 1.2em;
+                  font-size: 17px;
+                  font-weight: 500;
+                  border-radius: 0.9em;
+                  border: none;
+                  letter-spacing: 0.05em;
+                  display: flex;
+                  align-items: center;
+                  box-shadow: inset 0 0 1.6em -0.6em #395b64;
+                  overflow: hidden;
+                  position: relative;
+                  height: 2.8em;
+                  padding-right: 3.3em;
+                  margin-top: 2rem;
+                }
+
+                .cssbuttons-io-button .icon {
+                  background: white;
+                  margin-left: 1em;
+                  position: absolute;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  height: 2.2em;
+                  width: 2.2em;
+                  border-radius: 0.7em;
+                  box-shadow: 0.1em 0.1em 0.6em 0.2em #395b64;
+                  right: 0.3em;
+                  transition: all 0.3s;
+                }
+
+                .cssbuttons-io-button:hover .icon {
+                  width: calc(100% - 0.6em);
+                }
+
+                .cssbuttons-io-button .icon svg {
+                  width: 1.1em;
+                  transition: transform 0.3s;
+                  color: #395b64;
+                }
+
+                .cssbuttons-io-button:hover .icon svg {
+                  transform: translateX(0.1em);
+                }
+
+                .cssbuttons-io-button:active .icon {
+                  transform: scale(0.95);
+                }
+                .img {
+                  bottom: 4rem;
+                }
+              </style>
+
+              <script>
+                function goToDashboard() {
+                  location.href = "dashboard.html";
+                }
+              </script>
+            </div>
+
+            <div>
+              <img class="w-full" src="images/im1.png" alt="" />
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const button = document.getElementById("connect-button");
+      const moreBtn = document.getElementById("moreBtn");
+      const getStartedButton = document.getElementById("get-started-button");
+    
+      const updateButton = () => {
+  const account = localStorage.getItem("walletAddress");
+
+  if (!account) {
+    button.textContent = "Connect wallet";
+    moreBtn.style.display = "none";
+    getStartedButton.style.display = "none";
+    return;
+  }
+
+  ethereum
+    .request({ method: "eth_accounts" })
+    .then((accounts) => {
+      if (accounts.length === 0) {
+        button.textContent = "Connect wallet";
+        localStorage.removeItem("walletAddress");
+        moreBtn.style.display = "none";
+        getStartedButton.style.display = "none";
+      } else {
+        const shortenedAccount = `${accounts[0].slice(
+          0,
+          4
+        )}...${accounts[0].slice(-4)}`;
+        button.textContent = shortenedAccount;
+        localStorage.setItem("walletAddress", accounts[0]);
+        moreBtn.style.display = "flex";
+        getStartedButton.style.display = "block"; // This line is added to show the "Get started" button
+      }
+    });
+};
+
+    
+      button.addEventListener("click", () => {
+        const account = localStorage.getItem("walletAddress");
+    
+        if (!account) {
+          ethereum
+            .request({ method: "eth_requestAccounts" })
+            .then((accounts) => {
+              const shortenedAccount = `${accounts[0].slice(
+                0,
+                4
+              )}...${accounts[0].slice(-4)}`;
+              button.textContent = shortenedAccount;
+              localStorage.setItem("walletAddress", accounts[0]);
+              moreBtn.style.display = "flex";
+              getStartedButton.style.display = "inline-block";
+            });
+        } else {
+          ethereum
+            .request({ method: "eth_accounts" })
+            .then((accounts) => {
+              if (accounts.length === 0) {
+                button.textContent = "Connect wallet";
+                localStorage.removeItem("walletAddress");
+                moreBtn.style.display = "none";
+                getStartedButton.style.display = "none";
+              } else {
+                const shortenedAccount = `${accounts[0].slice(
+                  0,
+                  4
+                )}...${accounts[0].slice(-4)}`;
+                button.textContent = shortenedAccount;
+                moreBtn.style.display = "flex";
+                getStartedButton.style.display = "inline-block";
+              }
+            });
+        }
+      });
+    
+      updateButton();
+      ethereum.on("accountsChanged", updateButton);
+      getStartedButton.style.display = "none";
+    </script>
+    
+  </body>
+</html>
+
+
+

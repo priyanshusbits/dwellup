@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
+    <title>Job Details</title>
+  </head>
+  <body style="background-color: #2C3333;  background-image: url('./images/bg-texture.png');" >
+    
+    <h2  id="projectName" style="opacity: 0;"></h2>
+
+
+
+
+
+
+
+<div>
+    <section class="text-gray-600 body-font align-middle">
+        <div class="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center" style="max-width: 800px;">
+          <div class="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 w-1/2 border-0-2 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center"  >
+            <h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900" id="projectTitle" style="color: white" >......
+              
+            </h1>
+            <p class="mb-8 leading-relaxed" id="projectDescription" style="color: white">.........</p>
+            <p class="mb-8 leading-relaxed" id="projectDescription" style="color: white">STAKED : <span id="randomNumber"></span><span> ETH</span></p>
+            <div class="flex justify-center">
+                <a href="https://app.huddle01.com/lgz-vtap-yfj/lobby">
+                    <button class="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">MEET</button>
+                </a>
+             
+              <a href="marketplace.html"><button class="ml-4 inline-flex text-gray-700 bg-gray-100 border-0 py-2 px-6 focus:outline-none hover:bg-gray-200 rounded text-lg">Back</button></a>
+              
+            </div>
+          </div>
+          <div class="lg:max-w-lg lg:w-full md:w-1/2 w-1/2 ">
+            <img class="object-cover object-center rounded align-bottom" alt="hero" src="./images/hero.png">
+          </div>
+        </div>
+      </section>
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
+
+    
+    <script>
+
+        // Get the span element
+const spanElement = document.getElementById("randomNumber");
+
+// Generate a random number between 2 and 5 (inclusive)
+const randomNumber = Math.floor(Math.random() * 4) + 2;
+
+// Update the span with the random number
+spanElement.innerHTML = randomNumber.toString();
+
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const jobId = urlParams.get("jobId");
+
+      fetch("freelancer.json")
+        .then((response) => response.json())
+        .then((ABI) => {
+          const web3 = new Web3("https://endpoints.omniatech.io/v1/matic/mumbai/public");
+          const contract = new web3.eth.Contract(ABI, "0xB42518F7796a219BFFCA17e6555E3d4a84e473DD");
+
+          contract.methods.getProjectById(jobId).call((error, project) => {
+            if (error) {
+              console.error(error);
+              return;
+            }
+
+            const projectTitle = project.title;
+            const projectName = project.name;
+            const projectDescription = project.description;
+
+            document.getElementById("projectTitle").innerText = projectTitle;
+            document.getElementById("projectName").innerText = projectName;
+            document.getElementById("projectDescription").innerText = projectDescription;
+          });
+        })
+        .catch((error) => console.error("Error retrieving ABI:", error));
+    </script>
+  </body>
+</html>

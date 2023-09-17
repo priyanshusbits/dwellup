@@ -1,0 +1,543 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.3/dist/web3.min.js"></script>
+    <style>
+        p{color:green;}
+    </style>
+</head>
+<body style="">
+
+
+
+
+    <section class="vh-100" style="background-color: #2C3333; background-image: url('./images/bg-texture.png');">
+        ">
+        <div class="container py-5 h-100" ">
+          <div class="row d-flex justify-content-center align-items-center h-100" >
+            <div class="col-md-12 col-xl-4">
+      
+              <div class="card" style="border-radius: 15px;" >
+                <div class="card-body text-center" id="user-profile" >
+                  <div class="mt-3 mb-4">
+                    <img src="profile.png"
+                      class="rounded-circle img-fluid" style="width: 100px;" />
+                  </div>
+                  
+                  <h4 class="mb-2" id="name">Julie L. Arsenault</h4>
+                  <p class="text-muted mb-4"><span id="age"></span> <span class="mx-2">|</span>Available</p>
+                 
+                  <a href="agreement.html">
+                    <button type="button" class="btn btn-primary btn-rounded btn-lg">
+                        Create Agreement
+                      </button>
+                  </a>
+                  
+                  <div class="d-flex justify-content-between text-center mt-5 mb-2">
+                    <div>
+                      <p class="mb-2 h5" id="currentPosition"></p>
+                      <p class="text-muted mb-0">Current Occupation</p>
+                    </div>
+                    <div class="px-3">
+                      <p class="mb-2 h5" id="experience"></p>
+                      <p class="text-muted mb-0">Work Experiance</p>
+                    </div>
+                    <div>
+                      <p class="mb-2 h5" id="skills"></p>
+                      <p class="text-muted mb-0">Star Skill</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+      
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+      <script>
+
+        const contractABI = [
+            {
+                "inputs": [
+                    {
+                        "internalType": "string[]",
+                        "name": "mySkills",
+                        "type": "string[]"
+                    }
+                ],
+                "name": "addskills",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "projectId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "roleId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "applyForARole",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "projectId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "roleId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "freeLancer",
+                        "type": "address"
+                    }
+                ],
+                "name": "assignedARole",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "title",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "description",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "stake",
+                        "type": "uint256"
+                    },
+                    {
+                        "components": [
+                            {
+                                "internalType": "string",
+                                "name": "title",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "compensation",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "string[]",
+                                "name": "requirements",
+                                "type": "string[]"
+                            }
+                        ],
+                        "internalType": "struct FreeLance.rolesDto[]",
+                        "name": "roles",
+                        "type": "tuple[]"
+                    }
+                ],
+                "name": "createProject",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "generateRand",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getMessagges",
+                "outputs": [
+                    {
+                        "components": [
+                            {
+                                "internalType": "address",
+                                "name": "from",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "description",
+                                "type": "string"
+                            }
+                        ],
+                        "internalType": "struct FreeLance.message[]",
+                        "name": "",
+                        "type": "tuple[]"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getMyProjects",
+                "outputs": [
+                    {
+                        "components": [
+                            {
+                                "internalType": "address",
+                                "name": "owner",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "projectId",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "title",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "description",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "stake",
+                                "type": "uint256"
+                            },
+                            {
+                                "components": [
+                                    {
+                                        "internalType": "string",
+                                        "name": "title",
+                                        "type": "string"
+                                    },
+                                    {
+                                        "internalType": "uint256",
+                                        "name": "compensation",
+                                        "type": "uint256"
+                                    },
+                                    {
+                                        "internalType": "string[]",
+                                        "name": "requirements",
+                                        "type": "string[]"
+                                    }
+                                ],
+                                "internalType": "struct FreeLance.RolesDto[]",
+                                "name": "projectRole",
+                                "type": "tuple[]"
+                            }
+                        ],
+                        "internalType": "struct FreeLance.ProjectDto[]",
+                        "name": "",
+                        "type": "tuple[]"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "id",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getProjectById",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "title",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "description",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "stake",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "login",
+                "outputs": [
+                    {
+                        "components": [
+                            {
+                                "internalType": "address",
+                                "name": "accountId",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "name",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "age",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "currentPosition",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "experience",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "string[]",
+                                "name": "skills",
+                                "type": "string[]"
+                            }
+                        ],
+                        "internalType": "struct FreeLance.user",
+                        "name": "",
+                        "type": "tuple"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "messageContent",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "from",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "to",
+                        "type": "address"
+                    }
+                ],
+                "name": "sendMessage",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "age",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "currentPosition",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "experience",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "string[]",
+                        "name": "skills",
+                        "type": "string[]"
+                    }
+                ],
+                "name": "signup",
+                "outputs": [
+                    {
+                        "components": [
+                            {
+                                "internalType": "address",
+                                "name": "accountId",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "name",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "age",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "currentPosition",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "experience",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "string[]",
+                                "name": "skills",
+                                "type": "string[]"
+                            }
+                        ],
+                        "internalType": "struct FreeLance.user",
+                        "name": "",
+                        "type": "tuple"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "totalProjectsListed",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+        
+              fetch("freelancer.json")
+                .then((response) => response.json())
+                .then((ABI) => {
+                  const contractAddress = "0xB42518F7796a219BFFCA17e6555E3d4a84e473DD";
+                  var web3 = new Web3(window.ethereum);
+                  var contract = new web3.eth.Contract(ABI, contractAddress);
+        
+                  async function fetchUserProfile() {
+                    try {
+                      const accounts = await ethereum.request({
+                        method: "eth_requestAccounts",
+                      });
+                      const account = accounts[0];
+                      const contract = new web3.eth.Contract(
+                        contractABI,
+                        contractAddress
+                      );
+        
+                      contract.methods
+                        .login()
+                        .call({ from: account }, function (error, userProfile) {
+                          if (error) {
+                            console.error("Error fetching user profile:", error);
+                            return;
+                          }
+        
+                          console.log("User profile:", userProfile);
+        
+                          // Update the UI with the fetched user data
+                          document.getElementById("name").innerText = userProfile.name;
+                          document.getElementById("age").innerText = userProfile.age+" years";
+                          document.getElementById("currentPosition").innerText =
+                            userProfile.currentPosition;
+                          document.getElementById("experience").innerText =
+                            userProfile.experience+" years";
+                          document.getElementById("skills").innerText =
+                            userProfile.skills.join(", ");
+                        });
+                    } catch (error) {
+                      console.error("Error fetching user profile:", error);
+                    }
+                  }
+        
+                  fetchUserProfile();
+                })
+                .catch((error) => console.error("Error retrieving ABI:", error));
+            </script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
+    <title>Marketplace</title>
+  </head>
+  <body>
+
+<style>
+  .col{
+    background-color: #A5C9CA;
+  }
+
+  .wh{
+    color: rgb(63, 61, 61);
+    font-weight: 600;
+  font-size: 23px;
+  }
+  body{
+    background-color: #2C3333;
+    background-image: url('./images/bg-texture.png');
+  }
+  button {
+ display: flex;
+ height: 3em;
+ width: 100px;
+ align-items: center;
+ justify-content: center;
+ background-color: #eeeeee4b;
+ border-radius: 3px;
+ letter-spacing: 1px;
+ transition: all 0.2s linear;
+ cursor: pointer;
+ border: none;
+ background: #A5C9CA;
+}
+
+button > svg {
+ margin-right: 5px;
+ margin-left: 5px;
+ font-size: 20px;
+ transition: all 0.4s ease-in;
+}
+
+button:hover > svg {
+ font-size: 1.2em;
+ transform: translateX(-5px);
+}
+
+button:hover {
+ box-shadow: 9px 9px 33px #E7F6F2, -9px -9px 33px #A5C9CA;
+ transform: translateY(-2px);
+}
+</style>
+
+
+    <header class="text-gray-600 body-font">
+      <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center " style="max-width: 1200px;">
+        <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" href="dashboard.html">
+          <button>
+            <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1024 1024"><path d="M874.690416 495.52477c0 11.2973-9.168824 20.466124-20.466124 20.466124l-604.773963 0 188.083679 188.083679c7.992021 7.992021 7.992021 20.947078 0 28.939099-4.001127 3.990894-9.240455 5.996574-14.46955 5.996574-5.239328 0-10.478655-1.995447-14.479783-5.996574l-223.00912-223.00912c-3.837398-3.837398-5.996574-9.046027-5.996574-14.46955 0-5.433756 2.159176-10.632151 5.996574-14.46955l223.019353-223.029586c7.992021-7.992021 20.957311-7.992021 28.949332 0 7.992021 8.002254 7.992021 20.957311 0 28.949332l-188.073446 188.073446 604.753497 0C865.521592 475.058646 874.690416 484.217237 874.690416 495.52477z"></path></svg>
+            <span>Back</span>
+          </button>
+        </a>
+      </div>
+    </header>
+
+
+  
+    <section class="text-gray-600 body-font">
+      <div class="container px-5 pt-5 mx-auto" id="projects" >
+        <div class="flex flex-col text-center w-full ">
+          <h1 class="sm:text-2xl text-6xl lg:text-7xl font-large title-font text-white md-4  ">MARKETPLACE</h1>
+        </div>
+        <div class="flex flex-wrap m-4 bg-teal-50" id="data-container" ></div>
+      </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
+
+
+
+
+
+    <script>
+      fetch("freelancer.json")
+        .then((response) => response.json())
+        .then((ABI) => {
+          var web3 = new Web3("https://endpoints.omniatech.io/v1/matic/mumbai/public");
+          var contract = new web3.eth.Contract(ABI, "0xB42518F7796a219BFFCA17e6555E3d4a84e473DD");
+    
+          contract.methods.totalProjectsListed().call((error, totalProjects) => {
+            if (error) {
+              console.error(error);
+              return;
+            }
+    
+            for (let i = totalProjects - 1; i >= 0; i--) { // loop in reverse order
+              contract.methods.getProjectById(i).call((error, project) => {
+                if (error) {
+                  console.error(error);
+                  return;
+                }
+    
+                let projectTitle = project.title;
+                let projectName = project.name;
+                let projectDescription = project.description;
+    
+                let projectContainer = document.createElement("div");
+                projectContainer.classList.add("p-4", "w-full", "md:w-1/2", "lg:w-1/3");
+                
+    
+                let projectCard = document.createElement("div");
+                projectCard.classList.add("flex", "flex-col",  "justify-center", "h-64", "rounded-lg", "bg-gray-100", "overflow-hidden","col");
+               
+                
+
+    
+                let titleElement = document.createElement("h2");
+                titleElement.classList.add("text-gray-900", "text-lg", "title-font", "font-medium", "mb-2", "whitespace-nowrap", "overflow-hidden", "text-left","wh");
+                titleElement.textContent = projectTitle;
+                titleElement.style.marginLeft = "10%"
+                
+               
+    
+                let descriptionElement = document.createElement("p");
+                descriptionElement.classList.add("leading-relaxed", "text-base",  "whitespace-pre-wrap");
+                let words = projectDescription.split(" ");
+                let slicedWords = words.slice(0, 5);
+                let descriptionText = slicedWords.join(" ") + " ...";
+                descriptionElement.textContent = descriptionText;
+                descriptionElement.style.marginLeft = "10%"
+    
+                let knowMoreButton = document.createElement("a");
+                knowMoreButton.classList.add("mt-3", "text-indigo-500", "inline-flex", "items-center");
+                knowMoreButton.href = "job_details.html?jobId=" + i + "&title=" + encodeURIComponent(projectTitle) + "&name=" + encodeURIComponent(projectName) + "&description=" + encodeURIComponent(projectDescription);
+                knowMoreButton.textContent = "Learn More";
+                knowMoreButton.style.marginLeft = "10%"
+                knowMoreButton.style.color = "#41644A"
+                
+    
+                let arrowIcon = document.createElement("svg");
+                arrowIcon.setAttribute("fill", "none");
+                arrowIcon.setAttribute("stroke", "currentColor");
+                arrowIcon.setAttribute("stroke-linecap", "round");
+                arrowIcon.setAttribute("stroke-linejoin", "round");
+                arrowIcon.setAttribute("stroke-width", "2");
+                arrowIcon.classList.add("w-4", "h-4", "ml-2");
+    
+                let arrowPath = document.createElement("path");
+                arrowPath.setAttribute("d", "M5 12h14M12 5l7 7-7 7");
+                arrowIcon.appendChild(arrowPath);
+    
+                knowMoreButton.appendChild(arrowIcon);
+    
+                projectCard.appendChild(titleElement);
+                projectCard.appendChild(descriptionElement);
+                projectCard.appendChild(knowMoreButton);
+    
+                projectContainer.appendChild(projectCard);
+    
+                document.getElementById("data-container").appendChild(projectContainer);
+});
+}
+});
+})
+.catch((error) => console.error("Error retrieving ABI:", error));
+</script>
+    
+
+  </body>
+</html>

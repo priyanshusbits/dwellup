@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Setup</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.3/dist/web3.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+</head>
+<body style="background-color: #fbf4e3;">
+
+
+
+
+
+
+
+
+
+
+<div style="margin-top: 4rem;">
+    <div class="container mx-auto py-8 " style="/* From https://css.glass */
+    background: rgba(182, 137, 114, 0.36);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4.9px);
+    -webkit-backdrop-filter: blur(4.9px); max-width: 550px;">
+        <h1 class="text-3xl mb-6 text-center">SIGNUP </h1>
+        <form id="user-setup-form" class="w-full max-w-md mx-auto">
+
+
+           
+
+
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
+                    Name
+                </label>
+                <input class=" appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="Name">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="age">
+                    Age
+                </label>
+                <input class=" appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="age" type="number" placeholder="Age">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="currentPosition">
+                    Current Occupation
+                </label>
+                <input class=" appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="currentPosition" type="text" placeholder="Current Occupation">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="experience">
+                    Experience
+                </label>
+                <input class=" appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="experience" type="number" placeholder="Experience">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="skills">
+                    Skills (comma separated)
+                </label>
+                <input class=" appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="skills" type="text" placeholder="Skills">
+            </div>
+            <div class="flex items-center justify-between">
+                <button id="createUserBtn" class="bg-gray-900 hover:bg-yellow-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                    Submit
+                </button>
+                
+            </div>
+        </form>
+    </div>
+</div>
+
+   
+
+    <script>
+        fetch('freelancer.json')
+            .then(response => response.json())
+            .then(ABI => {
+                const contractAddress = "0xB42518F7796a219BFFCA17e6555E3d4a84e473DD";
+                var web3 = new Web3(window.ethereum);
+                var contract = new web3.eth.Contract(ABI, contractAddress);
+    
+                const createUserBtn = document.getElementById('createUserBtn');
+                createUserBtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+    
+                    const name = document.getElementById("name").value;
+                    const age = parseInt(document.getElementById("age").value);
+                    const currentPosition = document.getElementById("currentPosition").value;
+                    const experience = parseInt(document.getElementById("experience").value);
+                    const skills = document.getElementById("skills").value.split(",");
+    
+                    try {
+                        await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        const accounts = await web3.eth.getAccounts();
+                        const userAccount = accounts[0];
+                        const gasPrice = await web3.eth.getGasPrice();
+                        const gasEstimate = await contract.methods.signup(name, age, currentPosition, experience, skills).estimateGas({ from: userAccount });
+                        const txParams = {
+                            from: userAccount,
+                            gas: gasEstimate,
+                            gasPrice: gasPrice
+                        };
+    
+                        contract.methods.signup(name, age, currentPosition, experience, skills).send(txParams)
+                            .then((result) => {
+                                alert("User successfully created!");
+                                window.location.href = 'userprofile.html'; // Replace with the correct user profile page URL
+                            })
+                            .catch((error) => {
+                                alert("An error occurred while creating the user");
+                            });
+                    } catch (error) {
+                        console.error('Error retrieving account:', error);
+                    }
+                });
+            })
+            .catch(error => console.error('Error retrieving ABI:', error));
+    </script>
+    
+
+</body>
+</html>

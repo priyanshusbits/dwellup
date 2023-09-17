@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staking Agreement DApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
+</head>
+<body class="bg-gray-100" style="   background-color: #2C3333;
+background-image: url('./images/bg-texture.png');">
+    <div class="container mx-auto py-5">
+        <div class="bg-white p-5 rounded-lg shadow-md" style="max-width: 1000px; margin-left: 300px ; margin-top: 10%;">
+            <h1 class="text-2xl font-bold mb-5">Staking Agreement</h1>
+
+            <div id="alert" class="hidden"></div>
+
+            <div class="space-y-4">
+                <div class="flex flex-col">
+                    <label for="buyerAddress" class="font-semibold">Buyer Address</label>
+                    <input type="text" id="buyerAddress" class="border p-2 rounded">
+                </div>
+
+                <div class="flex flex-col">
+                    <label for="sellerAddress" class="font-semibold">Seller Address</label>
+                    <input type="text" id="sellerAddress" class="border p-2 rounded">
+                </div>
+
+                <div class="flex flex-col">
+                    <label for="amount" class="font-semibold">Staked Amount (in Ether)</label>
+                    <input type="number" id="amount" class="border p-2 rounded" step="any">
+                </div>
+                
+                <div class="space-x-2">
+                    <button id="stake" class="bg-blue-500 text-white py-2 px-4 rounded">Stake</button>
+             
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let web3, contract;
+        let buyerAddress, sellerAddress, amount;
+        let contractABI, contractAddress;
+        let stakeBtn, approveBtn, rejectBtn, withdrawBtn, burnStakedAmountBtn;
+
+        async function init() {
+            // Connect to MetaMask
+            if (window.ethereum) {
+                web3 = new Web3(window.ethereum);
+                try {
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                } catch (error) {
+                    showAlert("error", "MetaMask connection failed.");
+                    return;
+                }
+            } else {
+                showAlert("error", "MetaMask not detected.");
+                return;
+            }
+
+            // Contract ABI and address
+            contractABI = [
+	{
+		"inputs": [],
+		"name": "approve",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "seller",
+				"type": "address"
+			}
+		],
+		"name": "Approved",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "burnStakedAmount",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "reject",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "seller",
+				"type": "address"
+			}
+		],
+		"name": "Rejected",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "_buyer",
+				"type": "address"
+			}
+		],
+		"name": "setBuyer",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "_seller",
+				"type": "address"
+			}
+		],
+		"name": "setSeller",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "stake",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "buyer",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "Staked",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "buyer",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "Withdrawn",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "buyer",
+		"outputs": [
+			{
+				"internalType": "address payable",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "buyerStaked",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "seller",
+		"outputs": [
+			{
+				"internalType": "address payable",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "sellerApproved",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "sellerRejected",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "stakedAmount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+            contractAddress = "0x5EDd81213a14581a99570dC4f180e940990Ecc0f";
+
+            // Initialize contract instance
+            contract = new web3.eth.Contract(contractABI, contractAddress);
+
+            // Get DOM elements
+            buyerAddress = document.getElementById("buyerAddress");
+        sellerAddress = document.getElementById("sellerAddress");
+        amount = document.getElementById("amount");
+
+        stakeBtn = document.getElementById("stake");
+        approveBtn = document.getElementById("approve");
+        rejectBtn = document.getElementById("reject");
+        withdrawBtn = document.getElementById("withdraw");
+        burnStakedAmountBtn = document.getElementById("burnStakedAmount");
+
+        // Add event listeners
+        stakeBtn.addEventListener("click", stake);
+        approveBtn.addEventListener("click", approve);
+        rejectBtn.addEventListener("click", reject);
+        withdrawBtn.addEventListener("click", withdraw);
+        burnStakedAmountBtn.addEventListener("click", burnStakedAmount);
+    }
+
+    async function stake() {
+        const accounts = await web3.eth.getAccounts();
+        await contract.methods.setBuyer(buyerAddress.value).send({ from: accounts[0] });
+        showAlert("success", "Buyer address set.");
+        await contract.methods.setSeller(sellerAddress.value).send({ from: accounts[0] });
+        showAlert("success", "Seller address set.");
+        const value = web3.utils.toWei(amount.value, "ether");
+        await contract.methods.stake().send({ from: accounts[0], value });
+        showAlert("success", "Staked amount.");
+    }
+
+    async function approve() {
+        const accounts = await web3.eth.getAccounts();
+        await contract.methods.approve().send({ from: accounts[0] });
+        showAlert("success", "Staking agreement approved.");
+    }
+
+    async function reject() {
+        const accounts = await web3.eth.getAccounts();
+        await contract.methods.reject().send({ from: accounts[0] });
+        showAlert("success", "Staking agreement rejected.");
+    }
+
+    async function withdraw() {
+        const accounts = await web3.eth.getAccounts();
+        await contract.methods.withdraw().send({ from: accounts[0] });
+        showAlert("success", "Withdrawn staked amount.");
+    }
+
+    async function burnStakedAmount() {
+        const accounts = await web3.eth.getAccounts();
+        await contract.methods.burnStakedAmount().send({ from: accounts[0] });
+        showAlert("success", "Burned staked amount.");
+    }
+
+
+    function showAlert(type, message) {
+        const alert = document.getElementById("alert");
+        alert.className = `alert ${type === "success" ? "bg-green-500" : "bg-red-500"} text-white px-4 py-2 rounded mb-5`;
+        alert.innerHTML = message;
+        alert.classList.remove("hidden");
+
+        setTimeout(() => {
+            alert.classList.add("hidden");
+        }, 3000);
+    }
+
+    init();
+</script>
+
